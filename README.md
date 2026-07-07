@@ -24,18 +24,6 @@ Open the local URL printed by Vite, usually:
 http://localhost:5173
 ```
 
-Create a production build:
-
-```bash
-npm run build
-```
-
-Preview the production build:
-
-```bash
-npm run preview
-```
-
 ## What is included
 
 - Decision queue with approve, hold, and undo states.
