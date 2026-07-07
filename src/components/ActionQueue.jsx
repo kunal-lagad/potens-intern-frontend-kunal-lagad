@@ -1,10 +1,19 @@
 import { ACTION_ITEMS, STR, PRIORITY_STYLE } from '../data.js';
+import { playApproveSound, playHoldSound } from '../utils/audio.js';
+
 
 export default function ActionQueue({ lang, itemState, setItemState, focusedIdx, itemRefs, lowBw }) {
   const t = STR[lang];
   const openCount = Object.values(itemState).filter(s => s === 'open').length;
 
-  const setState = (id, state) => setItemState(prev => ({ ...prev, [id]: state }));
+  const setState = (id, state) => {
+    if (!lowBw) {
+      if (state === 'approved') playApproveSound();
+      if (state === 'held') playHoldSound();
+    }
+    setItemState(prev => ({ ...prev, [id]: state }));
+  };
+
 
   return (
     <section aria-labelledby="queueHeading">

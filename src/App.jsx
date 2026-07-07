@@ -5,6 +5,8 @@ import LiveMetric from './components/LiveMetric.jsx';
 import AnomalyPanel from './components/AnomalyPanel.jsx';
 import CommandPalette from './components/CommandPalette.jsx';
 import { ACTION_ITEMS, STR } from './data.js';
+import { playApproveSound, playHoldSound } from './utils/audio.js';
+
 
 export default function App() {
   const [lang, setLang] = useState('en');
@@ -100,15 +102,17 @@ export default function App() {
         });
       } else if (e.key === 'a') {
         const id = ACTION_ITEMS[focusedIdx].id;
+        if (!lowBw) playApproveSound();
         setItemState(prev => ({ ...prev, [id]: 'approved' }));
       } else if (e.key === 'h') {
         const id = ACTION_ITEMS[focusedIdx].id;
+        if (!lowBw) playHoldSound();
         setItemState(prev => ({ ...prev, [id]: 'held' }));
       }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [focusedIdx, paletteOpen]);
+  }, [focusedIdx, paletteOpen, lowBw]);
 
   return (
     <div className="font-body bg-paper text-ink dark:bg-ink dark:text-paper-100 transition-colors duration-200 min-h-screen relative">
