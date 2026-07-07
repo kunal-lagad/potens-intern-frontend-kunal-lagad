@@ -1,10 +1,10 @@
 import { ANOMALIES, STR, SEVERITY_STYLE } from '../data.js';
 
-export default function AnomalyPanel({ lang, anomalyRefs, highlightedId }) {
+export default function AnomalyPanel({ lang, anomalyRefs, highlightedId, lowBw }) {
   const t = STR[lang];
 
   return (
-    <div className="rounded-2xl border border-ink/10 dark:border-paper-100/15 p-5 shadow-soft">
+    <div className={`rounded-2xl p-5 shadow-soft border ${lowBw ? 'border-ink/10 dark:border-paper-100/15' : 'border-ink/10 dark:backdrop-blur-2xl dark:bg-white/[0.03] dark:border-white/[0.08] dark:shadow-2xl'}`}>
       <div className="flex items-center justify-between mb-3">
         <h2 className="font-display font-semibold text-lg">{t.anomalyTitle}</h2>
         <span className="text-xs font-mono text-ink/40 dark:text-paper-100/40">{t.autoTag}</span>

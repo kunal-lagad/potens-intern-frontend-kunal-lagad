@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ACTION_ITEMS, ANOMALIES, STR, PRIORITY_STYLE, SEVERITY_STYLE } from '../data.js';
 
-export default function CommandPalette({ open, onClose, lang, onSelectAction, onSelectAnomaly }) {
+export default function CommandPalette({ open, onClose, lang, onSelectAction, onSelectAnomaly, lowBw }) {
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef(null);
@@ -75,11 +75,11 @@ export default function CommandPalette({ open, onClose, lang, onSelectAction, on
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center pt-[12vh] px-4 bg-ink/50 backdrop-blur-sm"
+      className={`fixed inset-0 z-50 flex items-start justify-center pt-[12vh] px-4 ${lowBw ? 'bg-ink/50 backdrop-blur-sm' : 'bg-ink/30 dark:bg-[#000000]/40 backdrop-blur-md'}`}
       onClick={onClose}
     >
       <div
-        className="w-full max-w-xl rounded-2xl bg-paper-100 dark:bg-ink-50 border border-ink/10 dark:border-paper-100/15 shadow-soft overflow-hidden"
+        className={`w-full max-w-xl rounded-2xl shadow-soft overflow-hidden ${lowBw ? 'bg-paper-100 dark:bg-ink-50 border border-ink/10 dark:border-paper-100/15' : 'bg-paper-100 dark:bg-white/[0.05] dark:backdrop-blur-3xl border border-ink/10 dark:border-white/[0.1] shadow-2xl'}`}
         onClick={e => e.stopPropagation()}
       >
         <div className="flex items-center gap-2 px-4 py-3 border-b border-ink/10 dark:border-paper-100/15">

@@ -1,6 +1,6 @@
 import { ACTION_ITEMS, STR, PRIORITY_STYLE } from '../data.js';
 
-export default function ActionQueue({ lang, itemState, setItemState, focusedIdx, itemRefs }) {
+export default function ActionQueue({ lang, itemState, setItemState, focusedIdx, itemRefs, lowBw }) {
   const t = STR[lang];
   const openCount = Object.values(itemState).filter(s => s === 'open').length;
 
@@ -33,8 +33,8 @@ export default function ActionQueue({ lang, itemState, setItemState, focusedIdx,
               ref={el => (itemRefs.current[idx] = el)}
               tabIndex={0}
               className={`focus-row rounded-xl border p-4 card-pad transition-colors ${
-                isFocused ? 'border-signal-amber ring-1 ring-signal-amber/40' : 'border-ink/10 dark:border-paper-100/15'
-              } ${isDone ? 'opacity-50' : 'bg-white/40 dark:bg-paper-100/[0.03]'} shadow-soft`}
+                isFocused ? 'border-signal-amber ring-1 ring-signal-amber/40' : (lowBw ? 'border-ink/10 dark:border-paper-100/15' : 'border-ink/10 dark:border-white/[0.08]')
+              } ${isDone ? 'opacity-50' : (lowBw ? 'bg-white/40 dark:bg-paper-100/[0.03]' : 'bg-white/40 dark:bg-white/[0.03] dark:backdrop-blur-xl dark:shadow-xl')} shadow-soft`}
             >
               <div className="flex items-start gap-3">
                 <span className="font-mono text-xs text-ink/40 dark:text-paper-100/40 mt-1 w-5 shrink-0">{idx + 1}</span>

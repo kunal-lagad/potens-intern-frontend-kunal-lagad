@@ -111,8 +111,16 @@ export default function App() {
   }, [focusedIdx, paletteOpen]);
 
   return (
-    <div className="font-body bg-paper text-ink dark:bg-ink dark:text-paper-100 transition-colors duration-200 min-h-screen">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-5">
+    <div className="font-body bg-paper text-ink dark:bg-ink dark:text-paper-100 transition-colors duration-200 min-h-screen relative overflow-hidden">
+      {/* Ambient background glows for glassmorphism */}
+      {!lowBw && (
+        <>
+          <div className="hidden dark:block pointer-events-none absolute -top-40 -left-20 w-96 h-96 bg-signal-teal/15 rounded-full blur-[100px]"></div>
+          <div className="hidden dark:block pointer-events-none absolute top-1/2 -right-20 w-80 h-80 bg-signal-amber/10 rounded-full blur-[120px]"></div>
+        </>
+      )}
+
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-5 relative z-10">
         <Header
           lang={lang} setLang={setLang}
           isDark={isDark} setIsDark={setIsDark}
@@ -127,11 +135,12 @@ export default function App() {
             setItemState={setItemState}
             focusedIdx={focusedIdx}
             itemRefs={itemRefs}
+            lowBw={lowBw}
           />
 
           <aside className="flex flex-col gap-6">
-            <LiveMetric lang={lang} />
-            <AnomalyPanel lang={lang} anomalyRefs={anomalyRefs} highlightedId={highlightedAnomalyId} />
+            <LiveMetric lang={lang} lowBw={lowBw} />
+            <AnomalyPanel lang={lang} anomalyRefs={anomalyRefs} highlightedId={highlightedAnomalyId} lowBw={lowBw} />
           </aside>
         </div>
 
@@ -146,6 +155,7 @@ export default function App() {
         lang={lang}
         onSelectAction={handleSelectAction}
         onSelectAnomaly={handleSelectAnomaly}
+        lowBw={lowBw}
       />
     </div>
   );
