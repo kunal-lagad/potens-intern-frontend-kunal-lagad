@@ -26,15 +26,17 @@ http://localhost:5173
 
 ## What is included
 
-- Decision queue with approve, hold, and undo states.
-- Keyboard shortcuts: `j` / `k` to move, `a` to approve, `h` to hold.
+- A top 5 action list for decisions needed today, with one-line context and approve / hold actions.
+- A panel of automated-system anomalies using mock JSON-style data from `src/data.js`.
+- A ticking live counter for the next dispatch cutoff and queued orders.
+- Full bilingual toggle between English and Hindi.
+- Desktop-optimised layout that also responds cleanly on tablet screens.
+- Tailwind-based styling with custom tokens for color, typography, spacing, and dark mode.
+- Keyboard shortcuts for power users: `j` / `k` navigation, `a` to approve, and `h` to hold.
+- Low-bandwidth toggle that removes decorative visuals, disables heavier effects, and switches to a sparser layout.
+- Dark mode designed as a complete operational theme, not just a cosmetic color inversion.
 - Command palette with `Cmd+K` / `Ctrl+K` search across queue items and anomalies.
-- Hindi and English UI text.
-- Dark mode and low-bandwidth mode.
-- Split-flap countdown to the next dispatch cutoff.
-- Recharts-based mini visualizations for dispatch progress and queued-order movement.
-- Browser-generated audio cues for approve and hold actions.
-- Sticky header with live clock and quick controls.
+- Browser-generated audio cues for approve and hold actions, disabled in low-bandwidth mode.
 
 ## Project structure
 
