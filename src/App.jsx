@@ -25,6 +25,7 @@ export default function App() {
   const handleSelectAction = (idx) => {
     setFocusedIdx(idx);
     setPaletteOpen(false);
+    // Wait for the palette to unmount before scrolling/focusing the target row.
     requestAnimationFrame(() => {
       const el = itemRefs.current[idx];
       el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -35,6 +36,7 @@ export default function App() {
   const handleSelectAnomaly = (id) => {
     setPaletteOpen(false);
     setHighlightedAnomalyId(id);
+    // The ref map is keyed by anomaly id so palette results can jump across panels.
     requestAnimationFrame(() => {
       anomalyRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });

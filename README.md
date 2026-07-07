@@ -1,68 +1,108 @@
 # Ops Cockpit — React + Vite + Tailwind
 
-Same dashboard as the single-file HTML version, restructured as a proper React project.
+Ops Cockpit is a mock operations dashboard for a morning briefing workflow. It gives an operator a short ranked queue of decisions, live dispatch cutoff metrics, anomaly alerts, bilingual UI copy, low-bandwidth mode, dark mode, keyboard shortcuts, audio feedback, and a command palette for jumping around quickly.
 
-## Run it
+The app is intentionally frontend-only. All operational data is mock data in `src/data.js`; no data leaves the browser.
+
+## How to run it
+
+Install dependencies:
 
 ```bash
 npm install
+```
+
+Start the local dev server:
+
+```bash
 npm run dev
 ```
 
-Then open the printed local URL (usually `http://localhost:5173`).
+Open the local URL printed by Vite, usually:
+
+```text
+http://localhost:5173
+```
+
+Create a production build:
 
 ```bash
-npm run build     # production build to /dist
-npm run preview   # preview the production build
+npm run build
 ```
 
-## Structure
+Preview the production build:
 
+```bash
+npm run preview
 ```
+
+## What is included
+
+- Decision queue with approve, hold, and undo states.
+- Keyboard shortcuts: `j` / `k` to move, `a` to approve, `h` to hold.
+- Command palette with `Cmd+K` / `Ctrl+K` search across queue items and anomalies.
+- Hindi and English UI text.
+- Dark mode and low-bandwidth mode.
+- Split-flap countdown to the next dispatch cutoff.
+- Recharts-based mini visualizations for dispatch progress and queued-order movement.
+- Browser-generated audio cues for approve and hold actions.
+- Sticky header with live clock and quick controls.
+
+## Project structure
+
+```text
 src/
-  data.js                  # mock action items, anomalies, i18n strings, style maps
-  index.css                # Tailwind directives + custom CSS (split-flap, low-bw mode)
-  App.jsx                  # top-level state: language, theme, low-bandwidth, focus index,
-                            # item approve/hold state, and the j/k/a/h keyboard shortcuts
-  main.jsx                 # React root
+  App.jsx                  Top-level app state and keyboard orchestration
+  data.js                  Mock queue items, anomalies, i18n strings, style maps
+  index.css                Tailwind directives plus custom animation/low-bandwidth CSS
+  main.jsx                 React entry point
   components/
-    Header.jsx              # title, live clock, language/theme/low-bandwidth toggles, palette trigger
-    ActionQueue.jsx          # top-5 list, approve/hold/undo, keyboard focus ring
-    LiveMetric.jsx           # split-flap countdown to next dispatch cutoff + live counter
-    AnomalyPanel.jsx         # system-flagged anomalies list, scroll-to + highlight target
-    CommandPalette.jsx       # ⌘K / Ctrl+K searchable overlay — jump to any item or anomaly
-    Flap.jsx                 # reusable split-flap digit with flip animation on change
+    Header.jsx             Clock, language/theme/low-bandwidth toggles, palette trigger
+    ActionQueue.jsx        Ranked decision list with approve/hold/undo interactions
+    LiveMetric.jsx         Cutoff countdown, queued-order metric, Recharts visuals
+    AnomalyPanel.jsx       System-flagged anomalies with command-palette highlight target
+    CommandPalette.jsx     Searchable overlay for jumping to actions or anomalies
+    Flap.jsx               Reusable split-flap animation wrapper
+  utils/
+    audio.js               Web Audio API tones for decision feedback
 ```
 
-## Command palette
+## Design decisions
 
-Press `⌘K` (Mac) or `Ctrl+K` (Windows/Linux) anywhere, or click "Jump to anything" in the
-header. It searches action-item titles, context, owners, and IDs, plus anomaly systems and
-descriptions, live as you type. `↑`/`↓` move the selection, `Enter` jumps to it — the action
-queue scrolls to and focuses the row, the anomaly panel scrolls to and briefly rings the
-matching entry. `Esc` or a click outside closes it.
+The dashboard is built as a compact operational tool rather than a landing page. The first screen is the working surface: queue on the left, live metrics and anomalies on the right, with controls kept in a sticky header.
 
-The palette temporarily suspends the `j/k/a/h` row shortcuts while open (its own arrow/enter
-handling takes over), and `⌘K`/`Ctrl+K` itself works everywhere, including while typing in
-the palette's own search box, so it doubles as the close gesture too.
+State is kept in `App.jsx` because the app is small and the shared state is limited: language, theme, low-bandwidth mode, focused queue row, item decision states, palette visibility, and anomaly highlight state. Pulling in a state library would add more machinery than the app currently needs.
 
-State lives in `App.jsx` and is passed down as props — the dashboard is small enough that
-this stays readable without reaching for a state library. `itemState` (open/approved/held)
-and `focusedIdx` are the two pieces of state that the keyboard shortcuts, mouse clicks, and
-rendering all need to agree on, so they're lifted to the one place that owns the keydown
-listener.
+The command palette is included because ops dashboards get more useful when keyboard-first users can jump directly to a specific order, system, or anomaly. While the palette is open, it owns arrow/enter/escape handling so the queue shortcuts do not fight it.
 
-Design rationale (palette, type, layout, the split-flap signature element, and how each
-required/stretch item was met) is unchanged from the original HTML build — see the
-accompanying design README from that version for the full writeup.
+Low-bandwidth mode is treated as a real product mode, not just a visual toggle. It disables decorative animation, avoids custom font loading, removes heavier glass effects, and suppresses audio/extra visual flourishes where possible.
 
-## Notes
+The bilingual copy is stored next to the mock data instead of routed through a full i18n library. That keeps the prototype understandable while still proving that the layout can handle Hindi and English.
 
-- Tailwind config (`tailwind.config.js`) carries the same custom tokens (`ink`, `paper`,
-  `signal-amber/red/teal`, `font-display/body/mono`) as the HTML build, so visuals match
-  exactly — nothing was re-derived from Tailwind defaults.
-- No routing, no external state library, no CSS-in-JS: this stays close to what a small
-  ops tooling team could realistically maintain.
-- `npm install` could not be verified to complete in this sandboxed environment (no
-  registry access), so the build hasn't been run end-to-end here — worth a
-  `npm run build` on your machine as a first step.
+The split-flap metric is the signature visual element. It gives the dispatch cutoff a sense of urgency without needing a backend or live data feed.
+
+## What is broken or unfinished
+
+- The dashboard uses mock data only. Queue actions, anomalies, charts, and live counters are not connected to a backend.
+- Decisions are not persisted. Refreshing the page resets approve/hold state, theme, language, and low-bandwidth mode.
+- The cutoff countdown has an edge case during the exact cutoff minute: once seconds have passed after a cutoff time, it can roll toward the next day instead of the next same-day cutoff.
+- Audio relies on the browser Web Audio API and may be blocked or delayed until after a user interaction, depending on browser policy.
+- Accessibility is good enough for a prototype, but the command palette should eventually use fuller dialog/listbox semantics and active-descendant behavior.
+
+## What I would build next
+
+Because this version is frontend-only and uses mock data, the next step would be turning it into a real operations tool:
+
+1. Add a backend API for queue items, anomalies, user decisions, and audit history.
+2. Replace mock data with live operational data or a realistic event stream.
+3. Persist approve/hold decisions, user preferences, and notes across sessions.
+4. Add authentication, role-based access, and tests around the main decision workflow.
+
+## AI use log
+
+| Tool | Approximate usage | Used for |
+| --- | ---: | --- |
+| Claude | ~5-8 messages | Used for brainstorming dashboard feature ideas, copy polish, and sanity-checking the product direction. |
+| Antigravity | ~5-10 messages/actions | Used for UI implementation assistance, layout iteration, and improving the dashboard's interactive feel. |
+| Design.com | ~1 logo generation session | Used to generate and refine logo concepts for the Ops Cockpit brand direction. |
+| Codex / GPT-5 in Codex desktop | ~10 messages, ~18k model tokens | Used for project analysis, README rewrite, code-comment review, and documentation cleanup. |

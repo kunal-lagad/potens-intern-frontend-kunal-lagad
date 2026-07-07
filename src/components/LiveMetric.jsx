@@ -29,6 +29,7 @@ export default function LiveMetric({ lang, lowBw }) {
       const now = new Date();
       const nowMin = now.getHours() * 60 + now.getMinutes();
       const nowSec = now.getSeconds();
+      // Cutoffs are stored as minutes after midnight to keep the mock data readable.
       let targetMin = CUTOFFS.find(c => c >= nowMin);
       if (targetMin === undefined) targetMin = CUTOFFS[0] + 24 * 60;
 
