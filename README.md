@@ -75,7 +75,7 @@ The split-flap metric is the signature visual element. It gives the dispatch cut
 - Decisions are not persisted. Refreshing the page resets approve/hold state, theme, language, and low-bandwidth mode.
 - The cutoff countdown has an edge case during the exact cutoff minute: once seconds have passed after a cutoff time, it can roll toward the next day instead of the next same-day cutoff.
 - Audio relies on the browser Web Audio API and may be blocked or delayed until after a user interaction, depending on browser policy.
-- Accessibility is good enough for a prototype, but the command palette should eventually use fuller dialog/listbox semantics and active-descendant behavior.
+
 
 ## What I would build next
 
@@ -93,4 +93,4 @@ Because this version is frontend-only and uses mock data, the next step would be
 | Claude | ~5-8 messages | Used for brainstorming dashboard feature ideas, copy polish, and sanity-checking the product direction. |
 | Antigravity | ~5-10 messages/actions | Used for UI implementation assistance, layout iteration, and improving the dashboard's interactive feel. |
 | Design.com | ~1 logo generation session | Used to generate and refine logo concepts for the Ops Cockpit brand direction. |
-| Codex / GPT-5 in Codex desktop | ~10 messages, ~18k model tokens | Used for project analysis, README rewrite, code-comment review, and documentation cleanup. |
+| Codex / GPT-5 in Codex desktop | ~10 messages | Used for project analysis, README rewrite, code-comment review, and documentation cleanup. |
