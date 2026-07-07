@@ -86,18 +86,22 @@ export default function App() {
       const tag = document.activeElement.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA') return;
 
-      if (e.key === 'j') {
+      if (e.key.toLowerCase() === 'j') {
         e.preventDefault();
         setFocusedIdx(idx => {
           const next = Math.min(ACTION_ITEMS.length - 1, idx + 1);
-          itemRefs.current[next]?.focus();
+          const el = itemRefs.current[next];
+          el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el?.focus();
           return next;
         });
-      } else if (e.key === 'k') {
+      } else if (e.key.toLowerCase() === 'k') {
         e.preventDefault();
         setFocusedIdx(idx => {
           const next = Math.max(0, idx - 1);
-          itemRefs.current[next]?.focus();
+          const el = itemRefs.current[next];
+          el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el?.focus();
           return next;
         });
       } else if (e.key === 'a') {
@@ -138,6 +142,7 @@ export default function App() {
             itemState={itemState}
             setItemState={setItemState}
             focusedIdx={focusedIdx}
+            setFocusedIdx={setFocusedIdx}
             itemRefs={itemRefs}
             lowBw={lowBw}
           />

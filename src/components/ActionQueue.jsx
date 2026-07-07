@@ -2,7 +2,7 @@ import { ACTION_ITEMS, STR, PRIORITY_STYLE } from '../data.js';
 import { playApproveSound, playHoldSound } from '../utils/audio.js';
 
 
-export default function ActionQueue({ lang, itemState, setItemState, focusedIdx, itemRefs, lowBw }) {
+export default function ActionQueue({ lang, itemState, setItemState, focusedIdx, setFocusedIdx, itemRefs, lowBw }) {
   const t = STR[lang];
   const openCount = Object.values(itemState).filter(s => s === 'open').length;
 
@@ -41,6 +41,8 @@ export default function ActionQueue({ lang, itemState, setItemState, focusedIdx,
               key={item.id}
               ref={el => (itemRefs.current[idx] = el)}
               tabIndex={0}
+              onFocus={() => setFocusedIdx(idx)}
+              onClick={() => setFocusedIdx(idx)}
               className={`focus-row rounded-xl border p-4 card-pad transition-colors ${
                 isFocused ? 'border-signal-amber ring-1 ring-signal-amber/40' : (lowBw ? 'border-ink/10 dark:border-paper-100/15' : 'border-ink/10 dark:border-white/[0.08]')
               } ${isDone ? 'opacity-50' : (lowBw ? 'bg-white/40 dark:bg-paper-100/[0.03]' : 'bg-white/40 dark:bg-white/[0.03] dark:backdrop-blur-xl dark:shadow-xl')} shadow-soft`}
