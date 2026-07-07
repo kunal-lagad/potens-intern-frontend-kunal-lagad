@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.flap-wrap { perspective: 200px; }
+.flap {
+  position: relative;
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+}
+.flap-flip { animation: flapflip 0.28s ease-out; }
+@keyframes flapflip {
+  0% { transform: rotateX(0deg); opacity: 1; }
+  45% { transform: rotateX(-90deg); opacity: .35; }
+  55% { transform: rotateX(90deg); opacity: .35; }
+  100% { transform: rotateX(0deg); opacity: 1; }
+}
+::selection { background: #DE9A3C; color: #10161A; }
+.focus-row:focus-visible, button:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid #DE9A3C;
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .flap-flip { animation: none; }
+}
+.shadow-soft { box-shadow: 0 1px 2px rgba(16,22,26,0.04), 0 6px 16px rgba(16,22,26,0.05); }
+.dark .shadow-soft { box-shadow: 0 1px 2px rgba(0,0,0,0.2), 0 6px 16px rgba(0,0,0,0.25); }
+
+body.lowbw .decorative { display: none !important; }
+body.lowbw .shadow-soft { box-shadow: none !important; }
+body.lowbw .rounded-2xl, body.lowbw .rounded-xl { border-radius: 0.25rem !important; }
+body.lowbw .card-pad { padding: 0.5rem 0.75rem !important; }
+
+/* No animation cost in low-bandwidth mode — the flap still updates, it just doesn't flip */
+body.lowbw .flap-flip { animation: none !important; }
+
+/* No custom webfont request in low-bandwidth mode — fall back to whatever the OS ships with */
+body.lowbw .font-display,
+body.lowbw .font-body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif !important;
+}
+body.lowbw .font-mono,
+body.lowbw .flap {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important;
+}

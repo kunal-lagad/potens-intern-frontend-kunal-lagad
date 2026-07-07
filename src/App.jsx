@@ -1,0 +1,152 @@
+import { useEffect, useRef, useState } from 'react';
+import Header from './components/Header.jsx';
+import ActionQueue from './components/ActionQueue.jsx';
+import LiveMetric from './components/LiveMetric.jsx';
+import AnomalyPanel from './components/AnomalyPanel.jsx';
+import CommandPalette from './components/CommandPalette.jsx';
+import { ACTION_ITEMS, STR } from './data.js';
+
+export default function App() {
+  const [lang, setLang] = useState('en');
+  const [isDark, setIsDark] = useState(false);
+  const [lowBw, setLowBw] = useState(false);
+  const [focusedIdx, setFocusedIdx] = useState(0);
+  const [itemState, setItemState] = useState(() =>
+    Object.fromEntries(ACTION_ITEMS.map(i => [i.id, 'open']))
+  );
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [highlightedAnomalyId, setHighlightedAnomalyId] = useState(null);
+  const itemRefs = useRef([]);
+  const anomalyRefs = useRef({});
+  const t = STR[lang];
+
+  const handleSelectAction = (idx) => {
+    setFocusedIdx(idx);
+    setPaletteOpen(false);
+    requestAnimationFrame(() => {
+      const el = itemRefs.current[idx];
+      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el?.focus();
+    });
+  };
+
+  const handleSelectAnomaly = (id) => {
+    setPaletteOpen(false);
+    setHighlightedAnomalyId(id);
+    requestAnimationFrame(() => {
+      anomalyRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    setTimeout(() => setHighlightedAnomalyId(null), 1800);
+  };
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', isDark);
+  }, [isDark]);
+
+  useEffect(() => {
+    document.documentElement.lang = lang === 'en' ? 'en' : 'hi';
+  }, [lang]);
+
+  useEffect(() => {
+    document.body.classList.toggle('lowbw', lowBw);
+  }, [lowBw]);
+
+  // Load the custom typefaces only when low-bandwidth mode is off. If someone
+  // enables low-bandwidth mode (or lands with it already on, once a preference
+  // is wired up) the font request never happens — CSS falls back to system fonts.
+  useEffect(() => {
+    const FONT_LINK_ID = 'google-fonts-stylesheet';
+    const existing = document.getElementById(FONT_LINK_ID);
+
+    if (lowBw) {
+      existing?.remove();
+      return;
+    }
+    if (!existing) {
+      const link = document.createElement('link');
+      link.id = FONT_LINK_ID;
+      link.rel = 'stylesheet';
+      link.href = 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap';
+      document.head.appendChild(link);
+    }
+  }, [lowBw]);
+
+  // Keyboard shortcuts: j/k navigate, a approve, h hold, Cmd/Ctrl+K opens the command palette
+  useEffect(() => {
+    const handler = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setPaletteOpen(p => !p);
+        return;
+      }
+      if (paletteOpen) return; // palette owns arrow/enter/escape while it's open
+
+      const tag = document.activeElement.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+      if (e.key === 'j') {
+        e.preventDefault();
+        setFocusedIdx(idx => {
+          const next = Math.min(ACTION_ITEMS.length - 1, idx + 1);
+          itemRefs.current[next]?.focus();
+          return next;
+        });
+      } else if (e.key === 'k') {
+        e.preventDefault();
+        setFocusedIdx(idx => {
+          const next = Math.max(0, idx - 1);
+          itemRefs.current[next]?.focus();
+          return next;
+        });
+      } else if (e.key === 'a') {
+        const id = ACTION_ITEMS[focusedIdx].id;
+        setItemState(prev => ({ ...prev, [id]: 'approved' }));
+      } else if (e.key === 'h') {
+        const id = ACTION_ITEMS[focusedIdx].id;
+        setItemState(prev => ({ ...prev, [id]: 'held' }));
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [focusedIdx, paletteOpen]);
+
+  return (
+    <div className="font-body bg-paper text-ink dark:bg-ink dark:text-paper-100 transition-colors duration-200 min-h-screen">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-5">
+        <Header
+          lang={lang} setLang={setLang}
+          isDark={isDark} setIsDark={setIsDark}
+          lowBw={lowBw} setLowBw={setLowBw}
+          onOpenPalette={() => setPaletteOpen(true)}
+        />
+
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6">
+          <ActionQueue
+            lang={lang}
+            itemState={itemState}
+            setItemState={setItemState}
+            focusedIdx={focusedIdx}
+            itemRefs={itemRefs}
+          />
+
+          <aside className="flex flex-col gap-6">
+            <LiveMetric lang={lang} />
+            <AnomalyPanel lang={lang} anomalyRefs={anomalyRefs} highlightedId={highlightedAnomalyId} />
+          </aside>
+        </div>
+
+        <footer className="mt-8 pt-4 border-t border-ink/10 dark:border-paper-100/10 text-xs text-ink/40 dark:text-paper-100/40 font-mono decorative">
+          {t.footerNote}
+        </footer>
+      </div>
+
+      <CommandPalette
+        open={paletteOpen}
+        onClose={() => setPaletteOpen(false)}
+        lang={lang}
+        onSelectAction={handleSelectAction}
+        onSelectAnomaly={handleSelectAnomaly}
+      />
+    </div>
+  );
+}
