@@ -5,7 +5,16 @@ export default function CommandPalette({ open, onClose, lang, onSelectAction, on
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef(null);
+  const itemRefs = useRef([]);
   const t = STR[lang];
+
+  useEffect(() => {
+    if (open) {
+      requestAnimationFrame(() => {
+        itemRefs.current[activeIndex]?.scrollIntoView({ block: 'nearest' });
+      });
+    }
+  }, [activeIndex, open]);
 
   useEffect(() => {
     if (open) {
@@ -117,6 +126,7 @@ export default function CommandPalette({ open, onClose, lang, onSelectAction, on
               return (
                 <button
                   key={`a-${r.item.id}`}
+                  ref={el => (itemRefs.current[i] = el)}
                   onMouseEnter={() => setActiveIndex(i)}
                   onClick={() => onSelectAction(r.idx)}
                   className={`w-full text-left px-4 py-2 flex items-center gap-2 ${isActive ? 'bg-ink/5 dark:bg-paper-100/10' : ''}`}
@@ -144,6 +154,8 @@ export default function CommandPalette({ open, onClose, lang, onSelectAction, on
                   </div>
                 )}
                 <button
+                  key={`anm-btn-${a.id}`}
+                  ref={el => (itemRefs.current[i] = el)}
                   onMouseEnter={() => setActiveIndex(i)}
                   onClick={() => onSelectAnomaly(a.id)}
                   className={`w-full text-left px-4 py-2 flex items-center gap-2 ${isActive ? 'bg-ink/5 dark:bg-paper-100/10' : ''}`}
