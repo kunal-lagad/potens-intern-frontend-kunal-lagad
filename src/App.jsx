@@ -111,23 +111,23 @@ export default function App() {
   }, [focusedIdx, paletteOpen]);
 
   return (
-    <div className="font-body bg-paper text-ink dark:bg-ink dark:text-paper-100 transition-colors duration-200 min-h-screen relative overflow-hidden">
+    <div className="font-body bg-paper text-ink dark:bg-ink dark:text-paper-100 transition-colors duration-200 min-h-screen relative">
       {/* Ambient background glows for glassmorphism */}
       {!lowBw && (
-        <>
-          <div className="hidden dark:block pointer-events-none absolute -top-40 -left-20 w-96 h-96 bg-signal-teal/15 rounded-full blur-[100px]"></div>
-          <div className="hidden dark:block pointer-events-none absolute top-1/2 -right-20 w-80 h-80 bg-signal-amber/10 rounded-full blur-[120px]"></div>
-        </>
+        <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+          <div className="hidden dark:block absolute -top-40 -left-20 w-96 h-96 bg-signal-teal/15 rounded-full blur-[100px]"></div>
+          <div className="hidden dark:block absolute top-1/2 -right-20 w-80 h-80 bg-signal-amber/10 rounded-full blur-[120px]"></div>
+        </div>
       )}
 
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-5 relative z-10">
-        <Header
-          lang={lang} setLang={setLang}
-          isDark={isDark} setIsDark={setIsDark}
-          lowBw={lowBw} setLowBw={setLowBw}
-          onOpenPalette={() => setPaletteOpen(true)}
-        />
+      <Header
+        lang={lang} setLang={setLang}
+        isDark={isDark} setIsDark={setIsDark}
+        lowBw={lowBw} setLowBw={setLowBw}
+        onOpenPalette={() => setPaletteOpen(true)}
+      />
 
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pb-5 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6">
           <ActionQueue
             lang={lang}

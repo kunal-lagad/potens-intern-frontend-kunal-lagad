@@ -16,8 +16,9 @@ export default function Header({ lang, setLang, isDark, setIsDark, lowBw, setLow
   }, [lang]);
 
   return (
-    <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6 pb-4 border-b border-ink/10 dark:border-paper-100/10">
-      <div className="flex items-baseline gap-3">
+    <header className={`sticky top-0 z-40 pt-5 mb-6 border-b border-ink/10 dark:border-paper-100/10 ${lowBw ? 'bg-paper dark:bg-[#000000]' : 'bg-paper/80 dark:bg-ink/80 backdrop-blur-md'}`}>
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-baseline gap-3">
         <h1 className="font-display font-bold text-2xl sm:text-3xl tracking-tight">{t.title}</h1>
         <span className="hidden sm:inline text-xs font-mono uppercase tracking-widest text-ink/40 dark:text-paper-100/40">
           {t.subtitle}
@@ -70,6 +71,7 @@ export default function Header({ lang, setLang, isDark, setIsDark, lowBw, setLow
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 8.82a15 15 0 0120 0M5 12.86a10 10 0 0114 0M8.5 16.9a5 5 0 017 0" /><path d="M12 20h.01" strokeWidth="3" /></svg>
           <span>{t.lowbw}</span>
         </button>
+      </div>
       </div>
     </header>
   );
